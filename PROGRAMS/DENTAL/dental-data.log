@@ -1,0 +1,121 @@
+1                                           The SAS System               15:14 Friday, January 1, 2021
+
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M6) 
+      Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
+NOTE: This session is executing on the W32_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.1
+      SAS/ETS 15.1
+      SAS/OR 15.1
+      SAS/IML 15.1
+      SAS/QC 15.1
+
+NOTE: Additional host information:
+
+ W32_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.40 seconds
+      cpu time            0.31 seconds
+      
+1          *********************************************************************
+2          *
+3          *  PROGRAM DESCRIPTION: Process data from the Dental Study;
+4          *
+5          *-------------------------------------------------------------------
+6          *  JOB NAME:       dental-data.sas
+7          *  LANGUAGE:       SAS, VERSION 9.4
+8          *
+9          *  NAME:           Matthew Psioda
+10         *  DATE COMPLETE:  2020-12-30
+11         *-------------------------------------------------------------------
+12         *
+13         *  Modification History:
+14         *
+15         *  NAME:                         << Insert Name of Primary Programmer >>
+16         *  DATE COMPLETE:                << YYYY-MM-DD >>
+17         *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>
+18         ********************************************************************;
+19         %include "C:\Users\psioda\Desktop\BIOS-767\macros\setup.sas";
+80         %setup(dental-data,C:\Users\psioda\Desktop\BIOS-767);
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: There were 74 observations read from the data set SASHELP.VMACRO.
+NOTE: The data set WORK.VARS has 74 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.09 seconds
+2                                           The SAS System               15:14 Friday, January 1, 2021
+
+      cpu time            0.07 seconds
+      
+
+
+NOTE: There were 74 observations read from the data set WORK.VARS.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set SASHELP.VEXTFL.
+      WHERE FIND(UPCASE(xPath), 'DENTAL-DATA');
+NOTE: The data set WORK.TE has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+NOTE: Libref DAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data
+NOTE: Libref FITZ was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA
+NOTE: Program="dental-data" executed by User="psioda" on 01JAN21 at 15:14
+81         
+82         /*
+83         data fitz.dental(rename=(y1=age8 y2=age10 y3=age12 y4=age14));
+84          set fitz.dental;
+85         run;
+86         */
+87         
+88         /** code to write CSV files from SAS **/
+89         data _null_;
+90          set fitz.dental;
+91          file "&datPathFitz.&slash.dental-data.txt" dlm=',';
+92          put id gender age8 age10 age12 age14;
+93         run;
+
+NOTE: The file "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\dental-data.txt" is:
+      Filename=C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\dental-data.txt,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=01Jan2021:15:14:05,
+      Create Time=01Jan2021:13:57:02
+
+NOTE: 27 records were written to the file 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\dental-data.txt".
+      The minimum record length was 16.
+      The maximum record length was 22.
+NOTE: There were 27 observations read from the data set FITZ.DENTAL.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+                                            The SAS System
+
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.67 seconds
+      cpu time            0.53 seconds
+      

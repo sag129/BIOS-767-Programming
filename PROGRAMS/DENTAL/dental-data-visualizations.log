@@ -1,0 +1,374 @@
+1                                           The SAS System           13:05 Wednesday, January 13, 2021
+
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M6) 
+      Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
+NOTE: This session is executing on the W32_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.1
+      SAS/ETS 15.1
+      SAS/OR 15.1
+      SAS/IML 15.1
+      SAS/QC 15.1
+
+NOTE: Additional host information:
+
+ W32_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           2.76 seconds
+      cpu time            0.82 seconds
+      
+1          *********************************************************************
+2          *
+3          *  PROGRAM DESCRIPTION: Visualize data from the Dental Study;
+4          *
+5          *-------------------------------------------------------------------
+6          *  JOB NAME:       dental-data-visualizations.sas
+7          *  LANGUAGE:       SAS, VERSION 9.4
+8          *
+9          *  NAME:           Matthew Psioda
+10         *  DATE COMPLETE:  2020-12-30
+11         *-------------------------------------------------------------------
+12         *
+13         *  Modification History:
+14         *
+15         *  NAME:                         << Insert Name of Primary Programmer >>
+16         *  DATE COMPLETE:                << YYYY-MM-DD >>
+17         *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>
+18         ********************************************************************;
+19         %include "C:\USERS\PSIODA\DESKTOP\BIOS-767\MACROS\SETUP.SAS";
+76         %setup(DENTAL-DATA-VISUALIZATIONS,C:\USERS\PSIODA\DESKTOP\BIOS-767);
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: There were 74 observations read from the data set SASHELP.VMACRO.
+NOTE: The data set WORK.VARS has 74 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.39 seconds
+2                                           The SAS System           13:05 Wednesday, January 13, 2021
+
+      cpu time            0.14 seconds
+      
+
+
+NOTE: There were 74 observations read from the data set WORK.VARS.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set SASHELP.VEXTFL.
+      WHERE FIND(UPCASE(xPath), 'DENTAL-DATA-VISUALIZATIONS');
+NOTE: The data set WORK.TE has 1 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+      
+
+NOTE: Libref DAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\DATA
+NOTE: Libref DAT2 was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\DATA\DENTAL
+NOTE: Program="DENTAL-DATA-VISUALIZATIONS" executed by User="psioda" on 13JAN21 at 13:05
+77         
+78         proc format;
+79          value $ gnd "F" = "Female" "M" = "Male";
+NOTE: Format $GND has been output.
+80         run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.06 seconds
+      
+
+81         
+82         /**************** Produce Data Listing for Random Sample of Dental Study Children *****/
+83         proc sort data = dat2.dental out = dental; by gender; run;
+
+NOTE: There were 27 observations read from the data set DAT2.DENTAL.
+NOTE: The data set WORK.DENTAL has 27 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+      
+
+84         proc surveyselect data = dental method=srs out=sampled seed=1 n=5 noprint reps=1;
+85          strata gender;
+86         run;
+
+NOTE: The data set WORK.SAMPLED has 10 observations and 9 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+                                            The SAS System
+
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+87         
+88         ods escapechar='^';
+89         option papersize=("7in","4.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+90         ods pdf file = "&outpath.&slash.Dental-Table1.pdf" style=journal;
+NOTE: Writing ODS PDF output to DISK destination "C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Table1.pdf", 
+      printer "PDF".
+91         title1 "Distance (mm) from Pituitary Gland to Pterygomaxillary Fissure";
+92         title2 h=0.5 "(Data Presented for 5 Randomly Chosen Participants for Each Gender)";
+93          proc report data = sampled;
+94           column (gender id ("^{style [borderbottomwidth=0.5pt borderbottomcolor=black]Age (years)}" age8 age10 age12 age14));
+95         
+96           define gender / "Gender" group   format=$gnd. style={just=l cellwidth=1in};
+97           define id     / "ID"     display              style={just=c cellwidth=1in};
+98           define age8   / " 8"             format=6.1   style={just=c cellwidth=1in};
+99           define age10  / "10"             format=6.1   style={just=c cellwidth=1in};
+100          define age12  / "12"             format=6.1   style={just=c cellwidth=1in};
+101          define age14  / "14"             format=6.1   style={just=c cellwidth=1in};
+102        
+103          compute before gender;
+104           line @1 " ";
+105          endcomp;
+106        run;
+
+NOTE: Groups are not created because the usage of ID is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+variables.
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.18 seconds
+      
+NOTE: There were 10 observations read from the data set WORK.SAMPLED.
+
+107        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Table1.pdf.
+108        
+109        
+110        
+                                                         The SAS System
+
+111        
+112        
+113        /**************** Produce Table of Mean Distances for Dental Study Children *****/
+114        proc means data = dat2.dental nway noprint;
+115         class gender;
+116         var age:;
+117         output out = table2(drop=_:) mean=age8 age10 age12 age14 std= sdage8 sdage10 sdage12 sdage14 ;
+118        run;
+
+NOTE: There were 27 observations read from the data set DAT2.DENTAL.
+NOTE: The data set WORK.TABLE2 has 2 observations and 9 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.07 seconds
+      
+
+119        
+120        data table2b;
+121          set table2;
+122        	array mn[4] age8 age10 age12 age14;
+123        	array sd[4] sdage8 sdage10 sdage12 sdage14;
+124        	array col[4] $20 cage8 cage10 cage12 cage14;
+125        
+126        	do j = 1 to dim(mn);
+127        		col[j] = strip(put(mn[j],6.1))||' ('||strip(put(sd[j],6.1))||')';
+128        	end;
+129        	drop age: sd: j:;
+130        run;
+
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.TABLE2B has 2 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.04 seconds
+      
+
+131        
+132        
+133        option papersize=("5.3in","1.8in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+134        ods pdf file = "&outpath.&slash.Dental-Table2.pdf" style=journal;
+                                                         The SAS System
+
+NOTE: Writing ODS PDF output to DISK destination "C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Table2.pdf", 
+      printer "PDF".
+135        title1 j=c "Mean Distance (mm) by Age and Gender for Dental Study";
+136        footnote1 j=l "Note: Standard deviation presented in parentheses.";
+137         proc report data = table2b;
+138          column (gender ("^{style [borderbottomwidth=0.5pt borderbottomcolor=black] Age in Years}" cage8 cage10 cage12
+138      ! cage14));
+139          define gender  / "Gender" group   format=$gnd. style={just=l cellwidth=1in};
+140          define cage8   / " 8"                          style={just=c cellwidth=1in};
+141          define cage10  / "10"                          style={just=c cellwidth=1in};
+142          define cage12  / "12"                          style={just=c cellwidth=1in};
+143          define cage14  / "14"                          style={just=c cellwidth=1in};
+144        run;
+
+NOTE: Groups are not created because the usage of cage8 is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+variables.
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           0.27 seconds
+      cpu time            0.15 seconds
+      
+NOTE: There were 2 observations read from the data set WORK.TABLE2B.
+
+145        
+146        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Table2.pdf.
+147        
+148        
+149        
+150        /********** Line/High-Low Plot for Mean Distances****/
+151        data figure1;
+152          set table2;
+153        	array mn[4] age8 age10 age12 age14;
+154        	array sd[4] sdage8 sdage10 sdage12 sdage14;
+155        	do j = 1 to dim(mn);
+156        		level      = mn[j];
+157        		lowerlevel = max(mn[j] - 2*sd[j],0);
+158        		upperlevel = mn[j] + 2*sd[j];
+159        		age        = 8*(j=1) + 10*(j=2) + 12*(j=3) + 14*(j=4);
+160        		 if gender = 'F' then plotage = age - 0.05;
+161        		 else                 plotage = age + 0.05;
+                                                         The SAS System
+
+162        		output;
+163        	end;
+164        	drop age: sd: j;
+165        run;
+
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.FIGURE1 has 8 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+166        
+167        option papersize=("8.2in","4.2in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+168        ods pdf file = "&outpath.&slash.Dental-Figure1.pdf" nogtitle dpi=350;
+NOTE: Writing ODS PDF output to DISK destination "C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure1.pdf", 
+      printer "PDF".
+169        ods graphics / width=8.0in height=4.0in noborder;
+170        title1 j=c "Plot of Mean Distance (+/- 2SD) from Pituitary Gland to Pterygomaxillary Fissure";
+171        title2 j=c "by Age and Gender for the Dental Study";
+172        footnote;
+173        proc sgplot data = figure1;
+174         format gender $gnd.;
+175         label gender = 'Gender';
+176         series  x=plotage y=level                        / group=gender markers markerattrs=(symbol=circleFilled size=9)
+176      ! lineattrs=(thickness=2) name="A";
+177         highlow x=plotage low=lowerlevel high=upperlevel / group=gender lowcap=serif highcap=serif lineattrs=(thickness=2);
+178         yaxis values = (16 to 32 by 2) label='Mean Distance (mm)' offsetmin=0.02;
+179         xaxis values = (8 to 14 by 2) label='Age (years)';
+180         keylegend "A" / location=inside position=topleft;
+181        run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           42.97 seconds
+      cpu time            0.75 seconds
+      
+NOTE: There were 8 observations read from the data set WORK.FIGURE1.
+
+182        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure1.pdf.
+                                                         The SAS System
+
+183        
+184        
+185        
+186        
+187        /********** Spaghetti Plot for Distances ****/
+188        data figure2;
+189          set dat2.dental table2(in=a);
+190        
+191        	array mn[4] age8 age10 age12 age14;
+192        	do j = 1 to dim(mn);
+193        		if a then levelm = mn[j];
+194        		else      level  = mn[j];
+195        		age        = 8*(j=1) + 10*(j=2) + 12*(j=3) + 14*(j=4);
+196        		output;
+197        	end;
+198        	drop j age8 age10 age12 age14 sd:;
+199        run;
+
+NOTE: There were 27 observations read from the data set DAT2.DENTAL.
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.FIGURE2 has 116 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+200        
+201        option papersize=("8in","5.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+202        ods pdf file = "&outpath.&slash.Dental-Figure2.pdf" nogtitle dpi=350;
+NOTE: Writing ODS PDF output to DISK destination "C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure2.pdf", 
+      printer "PDF".
+203        ods graphics / width=7.8in height=4.8in noborder;
+204        title1 j=c "Individual and Gender-Mean Curves for Distances for Dental Study Participants";
+205        proc sgpanel data = figure2 noautolegend;
+206         format gender $gnd.;
+207         label gender = 'Gender';
+208         styleattrs datacontrastcolors=(lightBlue lightred lightPurple) datalinepatterns=(2 3 4);
+209         panelby gender / rows=1;
+210         series x=age y=level  /  group = id;
+211         series x=age y=levelm /  lineattrs=(pattern=1 thickness=3 color=black);
+                                                         The SAS System
+
+212         rowaxis values = (14 to 32 by 2) label='Distance (mm)' offsetmin=0.02;
+213         colaxis values = (8 to 14 by 2) label='Age (years)';
+214        run;
+
+NOTE: PROCEDURE SGPANEL used (Total process time):
+      real time           5.66 seconds
+      cpu time            0.43 seconds
+      
+NOTE: This graph has ATTRPRIORITY=COLOR in effect. The cycling of your custom symbols and/or line patterns is based on color 
+      priority. Please see ODS Graphics documentation on ATTRPRIORITY= option.
+NOTE: There were 116 observations read from the data set WORK.FIGURE2.
+
+215        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure2.pdf.
+216        
+217        
+218        
+219        /********** Matrix Scatter Plot *****/
+220        option papersize=("6.2in","6.2in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in
+220      ! bottommargin=0.1in;
+221        ods pdf file = "&outpath.&slash.Dental-Figure3.pdf" nogtitle dpi=350 style=sasweb;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure3.pdf", printer "PDF".
+222        ods graphics / reset noborder height=6in width=6in;
+223        title1 j=c "Matrix Scatter Plot of Distances (mm) for Dental Study Participants ";
+224        title2 j=c "by Age and Gender";
+225        proc sgscatter data=dat2.dental;
+226         format gender $gnd.;
+227         label gender = 'Gender'
+228               age8   = 'Age = 8'
+229               age10  = 'Age =10'
+230               age12  = 'Age =12'
+231               age14  = 'Age =14';
+232         matrix age8 age10 age12 age14 / group=gender diagonal=(histogram kernel)
+232      ! markerattrs=(symbol=circlefilled);
+233        run;
+
+NOTE: PROCEDURE SGSCATTER used (Total process time):
+      real time           2.72 seconds
+      cpu time            0.48 seconds
+      
+NOTE: There were 27 observations read from the data set DAT2.DENTAL.
+
+234        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\OUTPUT\DENTAL\Dental-Figure3.pdf.
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1:19.38
+      cpu time            5.92 seconds
+      

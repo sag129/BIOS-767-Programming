@@ -1,0 +1,380 @@
+1                                           The SAS System               15:26 Friday, January 1, 2021
+
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M6) 
+      Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
+NOTE: This session is executing on the W32_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.1
+      SAS/ETS 15.1
+      SAS/OR 15.1
+      SAS/IML 15.1
+      SAS/QC 15.1
+
+NOTE: Additional host information:
+
+ W32_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.47 seconds
+      cpu time            0.34 seconds
+      
+1          *********************************************************************
+2          *
+3          *  PROGRAM DESCRIPTION: Visualize data from the Treatment of Lead-
+4          *                       Exposed Children (TLC) Trial;
+5          *
+6          *-------------------------------------------------------------------
+7          *  JOB NAME:       lead-data-visualizations.sas
+8          *  LANGUAGE:       SAS, VERSION 9.4
+9          *
+10         *  NAME:           Matthew Psioda
+11         *  DATE COMPLETE:  2020-12-30
+12         *-------------------------------------------------------------------
+13         *
+14         *  Modification History:
+15         *
+16         *  NAME:                         << Insert Name of Primary Programmer >>
+17         *  DATE COMPLETE:                << YYYY-MM-DD >>
+18         *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>
+19         ********************************************************************;
+20         %include "C:\Users\psioda\Desktop\BIOS-767\macros\setup.sas";
+81         %setup(lead-data-visualizations,C:\Users\psioda\Desktop\BIOS-767);
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: There were 74 observations read from the data set SASHELP.VMACRO.
+NOTE: The data set WORK.VARS has 74 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+2                                           The SAS System               15:26 Friday, January 1, 2021
+
+      real time           0.10 seconds
+      cpu time            0.07 seconds
+      
+
+
+NOTE: There were 74 observations read from the data set WORK.VARS.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set SASHELP.VEXTFL.
+      WHERE FIND(UPCASE(xPath), 'LEAD-DATA-VISUALIZATIONS');
+NOTE: The data set WORK.TE has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Libref DAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data
+NOTE: Libref FITZ was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA
+NOTE: Program="lead-data-visualizations" executed by User="psioda" on 01JAN21 at 15:26
+82         
+83         proc format;
+84          value $ trt
+85           "A" = "Succimer"
+86           "P" = "Placebo";
+NOTE: Format $TRT has been output.
+87         run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+88         
+89         /******* Data Listing of Individual Blood Lead Levels *****/
+90         option papersize=("7in","4.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+                                                         The SAS System
+
+91         ods pdf file = "&outpathFitz.&slash.Lead-Table1.pdf" style=journal;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Table1.pdf", printer "PDF".
+92         title1 "Blood Lead Levels (mcg/dL) at Baseline, Week 1, Week 4, and Week 6";
+93         title2 "for 10 Randomly Selected Children in the TLC Trial";
+94          proc report data = fitz.tlc;
+95           where id in (79,8,44,11,69,29,46,13,74,53);
+96           column (trt id y0 y1 y4 y6);
+97         
+98           define trt / "Group" group   format=$trt. style={just=c cellwidth=1in};
+99           define id  / "ID"    display              style={just=c cellwidth=1in};
+100          define y0  / "Baseline"      format=6.1   style={just=c cellwidth=1in};
+101          define y1  / "Week 1"        format=6.1   style={just=c cellwidth=1in};
+102          define y4  / "Week 4"        format=6.1   style={just=c cellwidth=1in};
+103          define y6  / "Week 6"        format=6.1   style={just=c cellwidth=1in};
+104        
+105          compute before trt;
+106           line @1 " ";
+107          endcomp;
+108        run;
+
+NOTE: Groups are not created because the usage of id is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+variables.
+NOTE: There were 10 observations read from the data set FITZ.TLC.
+      WHERE id in (8, 11, 13, 29, 44, 46, 53, 69, 74, 79);
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.06 seconds
+      
+
+109        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Table1.pdf.
+110        
+111        
+112        
+113        /******** Summary of Mean Blood Lead Levels by Week *****/
+114        proc means data = fitz.tlc nway noprint;
+115         class trt;
+116         var y0 y1 y4 y6;
+117         output out = table2(drop=_:) mean=y0 y1 y4 y6 std=sdy0 sdy1 sdy4 sdy6 / autoname;
+                                                         The SAS System
+
+118        run;
+
+NOTE: There were 100 observations read from the data set FITZ.TLC.
+NOTE: The data set WORK.TABLE2 has 2 observations and 9 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+119        
+120        data table2b;
+121          set table2;
+122        	array mn[4] y0 y1 y4 y6:;
+123        	array sd[4] sdy0 sdy1 sdy4 sdy6;
+124        	array col[4] $20 cy0 cy1 cy4 cy6;
+125        
+126        	do j = 1 to dim(mn);
+127        		col[j] = strip(put(mn[j],6.1))||' ('||strip(put(sd[j],6.1))||')';
+128        	end;
+129        	drop y: sd: j:;
+130        run;
+
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.TABLE2B has 2 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+131        
+132        ods escapechar='^';
+133        option papersize=("5.3in","1.8in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+134        ods pdf file = "&outpathFitz.&slash.Lead-Table2.pdf" style=journal;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Table2.pdf", printer "PDF".
+135        title1 j=c "Mean (SD) Blood Lead Levels (mcg/dL) at Baseline, Week 1, Week 4, and Week 6";
+136        title2 j=c "by Treatment Group for the TLC Trial";
+137         proc report data = table2b;
+138          column (trt ("^{style [borderbottomwidth=0.5pt borderbottomcolor=black]Mean (SD)}" cy0 cy1 cy4 cy6));
+139        
+                                                         The SAS System
+
+140          define trt    / "Group"     group format=$trt.   style={just=c cellwidth=1in};
+141          define cy0     / "Baseline"                      style={just=c cellwidth=1in};
+142          define cy1     / "Week 1"                        style={just=c cellwidth=1in};
+143          define cy4     / "Week 4"                        style={just=c cellwidth=1in};
+144          define cy6     / "Week 6"                        style={just=c cellwidth=1in};
+145        run;
+
+NOTE: Groups are not created because the usage of cy0 is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+variables.
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+NOTE: There were 2 observations read from the data set WORK.TABLE2B.
+
+146        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Table2.pdf.
+147        
+148        
+149        
+150        /************* Line/High-Low Plot for blood lead levels *****/
+151        data figure1;
+152          set table2;
+153        	array mn[4] y0 y1 y4 y6;
+154        	array sd[4] sdy0 sdy1 sdy4 sdy6;
+155        	do j = 1 to dim(mn);
+156        		bloodlevel = mn[j];
+157        		lowerlevel = max(mn[j] - 2*sd[j],0);
+158        		upperlevel = mn[j] + 2*sd[j];
+159        		week       = 0*(j=1) + 1*(j=2) + 4*(j=3) + 6*(j=4);
+160        		 if trt = 'A' then plotweek = week - 0.05;
+161        		 else              plotweek = week + 0.05;
+162        		output;
+163        	end;
+164        	drop y: sd: j;
+165        run;
+
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.FIGURE1 has 8 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+                                                         The SAS System
+
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+166        
+167        option papersize=("6in","5.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+168        ods pdf file = "&outpathFitz.&slash.Lead-Figure1.pdf" nogtitle dpi=350;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure1.pdf", printer "PDF".
+169        ods graphics / width=5.8in height=4.8in noborder;
+170        title1 j=c "Plot of mean (+/- 2SD) blood lead levels at baseline, week 1, week 4, and week 6";
+171        title2 j=c "by treatment group for the TLC Trial";
+172        proc sgplot data = figure1;
+173         format trt $trt.;
+174         label trt = 'Treatment Group';
+175         series  x=plotweek y=bloodlevel / group = trt markers markerattrs=(symbol=circleFilled);
+176         highlow x=plotweek low=lowerlevel high=upperlevel / group=trt lowcap=serif highcap=serif;
+177         yaxis values = (0 to 40 by 5) label='Mean blood lead level (mcg/dL)' offsetmin=0.02;
+178         xaxis values = (0 to 6  by 2) label='Time (weeks)';
+179        run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           2.57 seconds
+      cpu time            0.15 seconds
+      
+NOTE: There were 8 observations read from the data set WORK.FIGURE1.
+
+180        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure1.pdf.
+181        
+182        
+183        
+184        
+185        /********** Spaghetti Plot for Blood Lead Levels ****/
+186        proc sort data = fitz.tlc out = tlc; by trt; run;
+
+NOTE: There were 100 observations read from the data set FITZ.TLC.
+NOTE: The data set WORK.TLC has 100 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+                                                         The SAS System
+
+      cpu time            0.01 seconds
+      
+
+187        proc surveyselect data = tlc method=srs out=sampled seed=3 n=10 noprint reps=1;
+188         strata trt;
+189        run;
+
+NOTE: The data set WORK.SAMPLED has 20 observations and 9 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+190        
+191        data figure2;
+192          set sampled table2(in=a);
+193        
+194        	array mn[4] y0 y1 y4 y6;
+195        	do j = 1 to dim(mn);
+196        		if a then bloodlevelm = mn[j];
+197        		else      bloodlevel  = mn[j];
+198        		week       = 0*(j=1) + 1*(j=2) + 4*(j=3) + 6*(j=4);
+199        		output;
+200        	end;
+201        	drop j y: sd:;
+202        run;
+
+NOTE: There were 20 observations read from the data set WORK.SAMPLED.
+NOTE: There were 2 observations read from the data set WORK.TABLE2.
+NOTE: The data set WORK.FIGURE2 has 88 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+203        
+204        option papersize=("8in","5.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;
+205        ods pdf file = "&outpathFitz.&slash.Lead-Figure2.pdf" nogtitle dpi=350;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure2.pdf", printer "PDF".
+                                                         The SAS System
+
+206        ods graphics / width=7.8in height=4.8in noborder;
+207        title1 j=c "Twenty Randomly Selected Individual and Treatment Group Mean Curves";
+208        title2 j=c "for Blood Lead Levels in the TLC Trial";
+209        proc sgpanel data = figure2 noautolegend;
+210         format trt $trt.;
+211         label trt = 'Treatment Group';
+212         styleattrs datacontrastcolors=(lightBlue lightred lightPurple) datalinepatterns=(2 3 4);
+213         panelby trt / rows=1;
+214         series x=week y=bloodlevel  /  group = id;
+215         series x=week y=bloodlevelm /  lineattrs=(pattern=1 thickness=3 color=black);
+216         rowaxis values = (0 to 40 by 10) label='Mean blood lead level (mcg/dL)' offsetmin=0.02;
+217         colaxis values = (0 to 6  by 2) label='Time (weeks)';
+218        run;
+
+NOTE: PROCEDURE SGPANEL used (Total process time):
+      real time           1.57 seconds
+      cpu time            0.23 seconds
+      
+NOTE: This graph has ATTRPRIORITY=COLOR in effect. The cycling of your custom symbols and/or line patterns is based on color 
+      priority. Please see ODS Graphics documentation on ATTRPRIORITY= option.
+NOTE: There were 88 observations read from the data set WORK.FIGURE2.
+
+219        ods pdf close;
+NOTE: ODS PDF printed 1 page to C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure2.pdf.
+220        
+221        
+222        
+223        /********** Matrix Scatter Plot *****/
+224        option papersize=("6.2in","6.2in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in
+224      ! bottommargin=0.1in;
+225        ods pdf file = "&outpathFitz.&slash.Lead-Figure3.pdf" nogtitle dpi=350;
+NOTE: Writing ODS PDF output to DISK destination 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure3.
+      pdf", printer "PDF".
+226        ods graphics / reset noborder height=6in width=6in;
+227        title1 j=c "Matrix Scatter Plot of Blood Lead Levels at Baseline, Week 1, Week 4, and
+227      ! Week 6";
+228        title2 j=c "by Treatment Group for the TLC Trial";
+229        proc sgscatter data=fitz.tlc;
+230        	format trt $trt.;
+231        	label trt = 'Treatment Group'
+232        	      y0  = 'Week = 0'
+233        	      y1  = 'Week = 1'
+234        	      y4  = 'Week = 4'
+235        	      y6  = 'Week = 6';
+236        	matrix y0 y1 y4 y6 / group=trt diagonal=(histogram kernel)
+236      ! markerattrs=(symbol=circlefilled);
+237        run;
+
+NOTE: PROCEDURE SGSCATTER used (Total process time):
+      real time           0.99 seconds
+      cpu time            0.15 seconds
+      
+                                          The SAS System
+
+NOTE: There were 100 observations read from the data set FITZ.TLC.
+
+238        title;
+239        ods pdf close;
+NOTE: ODS PDF printed 1 page to 
+      C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\data-analysis\Lead-Figure3.p
+      df.
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           10.35 seconds
+      cpu time            2.17 seconds
+      

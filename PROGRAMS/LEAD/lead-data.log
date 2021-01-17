@@ -1,0 +1,146 @@
+1                                           The SAS System               15:24 Friday, January 1, 2021
+
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M6) 
+      Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
+NOTE: This session is executing on the W32_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.1
+      SAS/ETS 15.1
+      SAS/OR 15.1
+      SAS/IML 15.1
+      SAS/QC 15.1
+
+NOTE: Additional host information:
+
+ W32_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.47 seconds
+      cpu time            0.32 seconds
+      
+1          *********************************************************************
+2          *
+3          *  PROGRAM DESCRIPTION: Process data from the Treatment of Lead-
+4          *                       Exposed Children (TLC) Trial;
+5          *
+6          *-------------------------------------------------------------------
+7          *  JOB NAME:       lead-data.sas
+8          *  LANGUAGE:       SAS, VERSION 9.4
+9          *
+10         *  NAME:           Matthew Psioda
+11         *  DATE COMPLETE:  2020-12-30
+12         *-------------------------------------------------------------------
+13         *
+14         *  Modification History:
+15         *
+16         *  NAME:                         << Insert Name of Primary Programmer >>
+17         *  DATE COMPLETE:                << YYYY-MM-DD >>
+18         *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>
+19         ********************************************************************;
+20         %include "C:\Users\psioda\Desktop\BIOS-767\macros\setup.sas";
+81         %setup(lead-data,C:\Users\psioda\Desktop\BIOS-767);
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: There were 74 observations read from the data set SASHELP.VMACRO.
+NOTE: The data set WORK.VARS has 74 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+2                                           The SAS System               15:24 Friday, January 1, 2021
+
+      real time           0.10 seconds
+      cpu time            0.06 seconds
+      
+
+
+NOTE: There were 74 observations read from the data set WORK.VARS.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set SASHELP.VEXTFL.
+      WHERE FIND(UPCASE(xPath), 'LEAD-DATA');
+NOTE: The data set WORK.TE has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+NOTE: Libref DAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data
+NOTE: Libref FITZ was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA
+NOTE: Program="lead-data" executed by User="psioda" on 01JAN21 at 15:24
+82         
+83         /*
+84         data fitz.lead;
+85          set fitz.lead;
+86         run;
+87         
+88         data fitz.tlc;
+89          set fitz.tlc;
+90         run;
+91         
+92         data fitz.tlcmiss;
+93          set fitz.tlcmiss;
+94         run;
+95         
+96         proc format;
+97          value nmiss
+98           . = " "
+99          other  = [best.];
+100        run;
+101        
+102        filename A "&datPathFitz.&slash.tlcmiss-data.txt";
+103        data _null_;
+104          set fitz.tlcmiss;
+105          file A dlm=',';
+106        	format y1-y4 nmiss.;
+107        	put id trt y1-y4;
+108        run;
+                                            The SAS System
+
+109        filename A clear;
+110        */
+111        
+112        /** code to read in text files in SAS **/
+113        data tlc;
+114         infile "&datPathFitz.&slash.tlc-data.txt";
+115         input id trt $ y0 y1 y4 y6;
+116        run;
+
+NOTE: The infile "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\tlc-data.txt" is:
+      Filename=C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\tlc-data.txt,
+      RECFM=V,LRECL=32767,File Size (bytes)=5799,
+      Last Modified=30Dec2020:08:45:28,
+      Create Time=30Dec2020:08:45:28
+
+NOTE: 100 records were read from the infile 
+      "C:\USERS\PSIODA\DESKTOP\BIOS-767\data\Fitzmaurice-Laird-Ware-ALA\tlc-data.txt".
+      The minimum record length was 57.
+      The maximum record length was 57.
+NOTE: The data set WORK.TLC has 100 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+117        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.76 seconds
+      cpu time            0.51 seconds
+      
