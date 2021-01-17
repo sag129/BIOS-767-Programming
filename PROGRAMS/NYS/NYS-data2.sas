@@ -16,8 +16,8 @@
 *  DATE COMPLETE:                << YYYY-MM-DD >>   
 *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>                                                               
 ********************************************************************;
-%include "C:\USERS\PSIODA\DESKTOP\BIOS-767\MACROS\SETUP.SAS";
-%setup(NYS-DATA2,C:\USERS\PSIODA\DESKTOP\BIOS-767);
+%include "C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING\MACROS\SETUP.SAS";
+%setup(NYS-DATA2,C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING);
 
 
 %macro varDetails(yr,Varlist);

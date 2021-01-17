@@ -17,8 +17,8 @@
 *  DATE COMPLETE:                << YYYY-MM-DD >>   
 *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>                                                               
 ********************************************************************;
-%include "C:\USERS\PSIODA\DESKTOP\BIOS-767\MACROS\SETUP.SAS";
-%setup(LEAD-DATA-ANALYSIS,C:\USERS\PSIODA\DESKTOP\BIOS-767);
+%include "C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING\MACROS\SETUP.SAS";
+%setup(LEAD-DATA-ANALYSIS,C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING);
 
 /***************************************** Statistical Analysis -- URMA *********************************/
 option papersize=("8.5in","11.0in") topmargin=0.1in rightmargin=0.1in leftmargin=0.1in bottommargin=0.1in;

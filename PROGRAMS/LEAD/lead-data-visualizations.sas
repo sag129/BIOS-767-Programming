@@ -17,8 +17,8 @@
 *  DATE COMPLETE:                << YYYY-MM-DD >>   
 *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>                                                               
 ********************************************************************;
-%include "C:\Users\psioda\Desktop\BIOS-767\macros\setup.sas";
-%setup(lead-data-visualizations,C:\Users\psioda\Desktop\BIOS-767);
+%include "C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING\macros\setup.sas";
+%setup(lead-data-visualizations,C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING);
 
 proc format;
  value $ trt
