@@ -16,8 +16,11 @@
 *  DATE COMPLETE:                << YYYY-MM-DD >>   
 *  DESCRIPTION OF MODIFICATION:  << Please insert 2-3 sentences >>                                                               
 ********************************************************************;
-%include "C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING\MACROS\SETUP.SAS";
-%setup(DENTAL-DATA,C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING);
+*%include "C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING\MACROS\SETUP.SAS";
+*%setup(DENTAL-DATA,C:\USERS\PSIODA\DOCUMENTS\GITHUB\BIOS-767-PROGRAMMING);
+
+%include "/folders/myshortcuts/BIOS-767-Programming/MACROS/setup.sas";
+%setup(DENTAL-DATA,    /folders/myshortcuts/BIOS-767-Programming);
 
 /*
 data fitz.dental(rename=(y1=age8 y2=age10 y3=age12 y4=age14));
